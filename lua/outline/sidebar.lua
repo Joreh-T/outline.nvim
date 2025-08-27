@@ -181,7 +181,23 @@ function Sidebar:setup_buffer_autocmd()
     vim.api.nvim_create_autocmd('CursorMoved', {
       buffer = 0,
       callback = function()
-        self.preview:show()
+        self.preview:close()
+        if self.preview_timer then
+          self.preview_timer:stop()
+          self.preview_timer:close()
+        end
+        self.preview_timer = vim.loop.new_timer()
+        self.preview_timer:start(cfg.o.preview_window.auto_preview_delay, 0, function()
+          vim.schedule(function() -- Schedule to run on the main loop to avoid issues
+            if self.view:is_open() and self.view.buf == vim.api.nvim_get_current_buf() then
+              self.preview:show()
+            end
+            if self.preview_timer then
+              self.preview_timer:close()
+              self.preview_timer = nil
+            end
+          end)
+        end)
       end,
     })
   else

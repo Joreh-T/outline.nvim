@@ -28,6 +28,8 @@ M.defaults = {
       follow = { 'CursorMoved' },
       items = { 'InsertLeave', 'WinEnter', 'BufEnter', 'BufWinEnter', 'BufWritePost' },
     },
+    update_on_buf_enter_blacklist_exact = { 'neo-tree' },
+    update_on_buf_enter_blacklist_pattern = { '^Avante', 'help', 'NvimTree', 'packer', 'lazy', 'mason' },
   },
   outline_window = {
     position = 'right',
@@ -51,6 +53,7 @@ M.defaults = {
   preview_window = {
     live = false,
     auto_preview = false,
+    auto_preview_delay = 300,
     width = 50,
     min_width = 50,
     relative_width = true,

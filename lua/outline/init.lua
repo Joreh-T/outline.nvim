@@ -14,9 +14,30 @@ local M = {
 
 local function setup_global_autocmd()
   if utils.table_has_content(cfg.o.outline_items.auto_update_events.items) then
+    local exact_blacklist = {}
+    for _, ft in ipairs(cfg.o.outline_items.update_on_buf_enter_blacklist_exact) do
+      exact_blacklist[ft] = true
+    end
+    local pattern_blacklist = cfg.o.outline_items.update_on_buf_enter_blacklist_pattern
+
     vim.api.nvim_create_autocmd(cfg.o.outline_items.auto_update_events.items, {
       pattern = '*',
-      callback = function()
+      callback = function(args)
+        if args.event == 'BufEnter' or args.event == 'BufWinEnter' or args.event == 'WinEnter' then
+          local ft = vim.bo[args.buf].filetype
+          if ft and ft ~= '' then
+            -- First, check exact match blacklist (more efficient)
+            if exact_blacklist[ft] then
+              return
+            end
+            -- If no exact match, check pattern blacklist
+            for _, pattern in ipairs(pattern_blacklist) do
+              if string.match(ft, pattern) then
+                return -- Matched a pattern, do not refresh.
+              end
+            end
+          end
+        end
         M._sidebar_do('_refresh')
       end,
     })
