@@ -375,8 +375,9 @@ function Sidebar:__refresh()
     return
   end
   -- No provider
-  self:refresh_setup()
-  self:no_providers_ui()
+  return
+--   self:refresh_setup()
+--   self:no_providers_ui()
 end
 
 -- stylua: ignore start
