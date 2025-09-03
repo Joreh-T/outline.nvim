@@ -375,9 +375,18 @@ function Sidebar:__refresh()
     return
   end
   -- No provider
-  return
---   self:refresh_setup()
---   self:no_providers_ui()
+  for _, blacklisted_ft in ipairs(cfg.o.outline_items.update_on_buf_enter_blacklist_exact) do
+    if ft == blacklisted_ft then
+      return
+    end
+  end
+  for _, pattern in ipairs(cfg.o.outline_items.update_on_buf_enter_blacklist_pattern) do
+    if ft:match(pattern) then
+      return
+    end
+  end
+  self:refresh_setup()
+  self:no_providers_ui()
 end
 
 -- stylua: ignore start
